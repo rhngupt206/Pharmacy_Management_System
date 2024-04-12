@@ -1,0 +1,235 @@
+﻿@model Pharmacy_Management_System.Models.PMSModel
+
+@{
+    ViewBag.Title = "Index";
+}
+<head>
+    <title>Billing</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+   
+    <style>
+        body {
+            background-image: url('../../images/inside.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .table {
+            background-color: ghostwhite;
+            border-radius: 10px;
+            border: 2px;
+            opacity: 0.85;
+        }
+
+        img {
+            height: 30px;
+        }
+
+        * {
+            font-family: Poppins;
+        }
+
+        .nav-link {
+            color: #0c11f9;
+        }
+
+        .cle {
+            text-align: center;
+            font-size: larger;
+            font-weight: 800;
+        }
+    </style>
+</head>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="~/Images/telemedicine.png" /></a>  <!--we have to add image here-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <span class="navbar-brand mb-0 h1">Pharmacy Management System</span>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="@Url.Action("Index")"><img src="~/Images/medicine.png" />Billing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index","Home")"><img src="~/Images/arrow.png" />Logout</a>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+
+    <body>
+        @using (Html.BeginForm("AddToBill", "Bill", FormMethod.Post))
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <h4>Online Pharmacy Billing</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                @Html.HiddenFor(model => model.MedCode, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.MedStock, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.LabelFor(model => model.MedName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="form-group">
+                                    @Html.EditorFor(model => model.MedName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.MedName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(model => model.MedPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="form-group">
+                                    @Html.EditorFor(model => model.MedPrice, new { htmlAttributes = new { @class = "form-control",@readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.MedPrice, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.LabelFor(model => model.MedQty, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="form-group">
+                                    @Html.EditorFor(model => model.MedQty, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.MedQty, "", new { @class = "text-danger" })
+                                    <span style="color:red;">@TempData["Error"]</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(model => model.BillDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="form-group">
+                                    @Html.EditorFor(model => model.BillDate, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.BillDate, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="submit" value="Add To Bill" class="btn btn-success btn-block btn-block" />
+                            </div>
+                            <div class="col-md-6">
+                                <input type="submit" value="Reset" class="btn btn-danger btn-block btn-block" formaction="@Url.Action("Reset")" formmethod="post" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2>Medicine List</h2>
+                                <GridView id="MedicinesList" class="table table-success" runat="server">
+                                    <table class="table">
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.MedCode)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.MedName)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.MedPrice)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.MedStock)
+                                            </th>
+
+                                            <th>Select</th>
+                                        </tr>
+
+                                        @foreach (var item in Model.MedDetails)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.MedCode)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.MedName)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.MedPrice)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.MedStock)
+                                                </td>
+
+                                                <td>
+                                                    @Html.ActionLink("Choose", "Index", new { id = item.MedCode })
+                                                </td>
+                                            </tr>
+                                        }
+
+                                    </table>
+                                </GridView> <!--last-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2 class="text-center text-success">Client List</h2>
+                                <GridView id="BillGV" class="table table-success" runat="server">
+                                    <table class="table">
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.BillList.ID)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.BillList.Name)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.BillList.Price)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.BillList.Qty)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.BillList.Total)
+                                            </th>
+                                            
+                                        </tr>
+
+                                        @foreach (var item in Model.BillLists)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.ID)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Name)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Price)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Qty)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Total)
+                                                </td>
+                                            </tr>
+
+                                        }
+
+
+                                    </table>
+                                </GridView>
+                                <div class="cle">
+                                    Total Amount:
+                                    @Session["billamount"]
+                                </div>
+                                <div class="col d-grid">
+                                    <input type="submit" value="Print" class="btn btn-success btn-block" formaction="@Url.Action("Print")" formmethod="post" />
+                                </div>
+                                <!--<div class="col d-grid">
+                                <input type="button" value="Clear" class="btn btn-warning btn-block btn-block" />
+                            </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </body>

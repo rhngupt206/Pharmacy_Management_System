@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewBag.Title = "LogInAsAdmin";
+    
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('../../images/pexels-pixabay-139398.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            @ViewBag.Notification
+            <h2 class="text-center mb-4">Login</h2>
+            @using (Html.BeginForm("LoginAsAdmin", "Home", FormMethod.Post))
+            {
+                <div class="form-group">
+                    <label>Username</label>
+                    @Html.TextBox("username",null,new { @class ="form-control"})
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    @Html.TextBox("password", null, new { @class = "form-control" , @type = "password" })
+                </div>
+                <input type="submit" value="Login" class="btn btn-primary btn-block" >
+            }
+        </div>
+    </div>
+</body>
+</html>
+
+
